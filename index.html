@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AIESEC in Saegis Poster Generator </title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Lato', 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%); 
+            display: flex; 
+            margin: 0; 
+            height: 100vh; 
+        }
+        .sidebar { 
+            width: 380px; 
+            background: white; 
+            padding: 30px; 
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08); 
+            z-index: 10; 
+            overflow-y: auto; 
+        }
+        .canvas-area { 
+            flex-grow: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 30px; 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); 
+        }
+        h2 { 
+            color: #037ef3; 
+            margin-top: 0; 
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 22px;
+            background: #f85a3f;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        label { 
+            font-weight: 600; 
+            display: block; 
+            margin-bottom: 8px; 
+            color: #2c3e50; 
+            font-size: 14px; 
+        }
+        input, textarea { 
+            width: 100%; 
+            padding: 12px 15px; 
+            margin-bottom: 20px; 
+            border: 2px solid #e1e8ed; 
+            border-radius: 8px; 
+            box-sizing: border-box;
+            font-family: 'Lato', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #037ef3;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(3, 126, 243, 0.1);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .upload-btn { 
+            background: #f85a3f;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: block;
+        }
+        .upload-btn:hover {
+            background: #e04a2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(248, 90, 63, 0.3);
+        }
+        .upload-btn::file-selector-button {
+            display: none;
+        }
+        button { 
+            width: 100%; 
+            padding: 16px; 
+            background: #037ef3; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(3, 126, 243, 0.2);
+        }
+        button:hover { 
+            background: #0268d1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(3, 126, 243, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        hr { 
+            border: 0; 
+            border-top: 2px solid #e1e8ed; 
+            margin: 30px 0; 
+        }
+        #posterCanvas {
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            background: white;
+        }
+        .footer-text {
+            color: #037ef3;
+            font-family: 'Shiny paint', cursive;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>1. Upload </h2>
+    <label>Select Template (.jpg/.png)</label>
+    <input type="file" id="fileInput" accept="image/*" class="upload-btn">
+    
+    <hr>
+    
+    <h2>2. Edit Content</h2>
+    <label>Duration</label>
+    <input type="text" id="inputDuration" value="6 weeks" oninput="updatePoster()">
+
+    <label>Country</label>
+    <input type="text" id="inputCountry" value="Thailand" oninput="updatePoster()">
+
+    <label>Provided Options</label>
+    <div style="margin-bottom: 20px; background: #fafbfc; padding: 12px; border-radius: 8px; border: 2px solid #e1e8ed;">
+        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 8px; cursor: pointer; text-transform: capitalize;">
+            <input type="checkbox" id="optAccommodation" onchange="updatePoster()" checked style="width: auto; margin: 0 10px 0 0;"> Accommodation
+        </label>
+        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 8px; cursor: pointer;">
+            <input type="checkbox" id="optFood" onchange="updatePoster()" checked style="width: auto; margin: 0 10px 0 0;"> Food
+        </label>
+        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 8px; cursor: pointer;">
+            <input type="checkbox" id="optTransportation" onchange="updatePoster()" checked style="width: auto; margin: 0 10px 0 0;"> Transportation
+        </label>
+        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 8px; cursor: pointer;">
+            <input type="checkbox" id="optComputer" onchange="updatePoster()" style="width: auto; margin: 0 10px 0 0;"> Computer
+        </label>
+        <label style="display: flex; align-items: center; font-weight: normal; margin-bottom: 0px; cursor: pointer;">
+            <input type="checkbox" id="optLeadershipSpace" onchange="updatePoster()" checked style="width: auto; margin: 0 10px 0 0;"> Leadership Space
+        </label>
+    </div>
+
+    <label>Description</label>
+    <textarea id="inputDesc" rows="5" oninput="updatePoster()">Global Volunteers will collaborate with formal and technical schools to create and conduct soft and hard skills trainings.</textarea>
+
+    <button onclick="downloadPoster()">Download Final Image</button>
+    
+    <p class="footer-text">26-27 B2C Mkt Aiesec In Saegis</p>
+</div>
+
+<div class="canvas-area">
+    <canvas id="posterCanvas"></canvas>
+</div>
+
+<script>
+    const canvas = new fabric.Canvas('posterCanvas');
+    const canvasWidth = 432;
+    const canvasHeight = 540;
+
+    canvas.setWidth(canvasWidth);
+    canvas.setHeight(canvasHeight);
+
+    // Initial Text Layers (Invisible until background is loaded)
+    const duration = new fabric.Text('', { left: 65, top: 93,fontSize: 28,fontFamily: 'lato',fill: 'white',angle: -10, id: 'durationText' });
+    const country = new fabric.Text('', { left: 215, top: 72, fontSize: 65, fontFamily: 'Shiny paint, cursive', fill: '#F85A40', id: 'countryText' });
+    const desc = new fabric.Textbox('', { left: 20, top: 270, width: 200,fontSize: 11,lineHeight: 1.1,fontFamily: 'Lato',fill: '#444', id: 'descText' });
+
+    canvas.add(duration, country, desc);
+
+    // FILE UPLOADER LOGIC
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(f) {
+            const data = f.target.result;
+            fabric.Image.fromURL(data, function(img) {
+                // Resize background to fit canvas
+                img.scaleToWidth(canvas.width);
+                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                
+                // Show text now that we have a template
+                updatePoster();
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function renderOptions() {
+        const existing = canvas.getObjects().filter(o => o.isOptionElement);
+        existing.forEach(o => canvas.remove(o));
+
+        const opts = [
+            { id: 'optAccommodation', label: 'Accommodation' },
+            { id: 'optFood', label: 'Food' },
+            { id: 'optTransportation', label: 'Transportation' },
+            { id: 'optComputer', label: 'Computer' },
+            { id: 'optLeadershipSpace', label: 'Leadership Space' }
+        ];
+
+        let currentY = 195;
+        const startX = 25;
+
+        opts.forEach(opt => {
+            const el = document.getElementById(opt.id);
+            if (el && el.checked) {
+                const rect = new fabric.Rect({
+                    left: startX,
+                    top: currentY + 1,
+                    width: 10,
+                    height: 10,
+                    fill: '#4CAF50',
+                    rx: 2,
+                    ry: 2,
+                    isOptionElement: true
+                });
+                
+                const tick = new fabric.Text('✔', {
+                    left: startX + 1.5,
+                    top: currentY - 2,
+                    fontSize: 10,
+                    fill: 'white',
+                    fontFamily: 'sans-serif',
+                    isOptionElement: true
+                });
+
+                const text = new fabric.Text(opt.label, {
+                    left: startX + 16,
+                    top: currentY,
+                    fontSize: 11,
+                    fontFamily: 'Lato',
+                    fill: '#444',
+                    isOptionElement: true
+                });
+
+                canvas.add(rect, tick, text);
+                currentY += 15;
+            }
+        });
+    }
+
+    function updatePoster() {
+        const mappings = [
+            { id: 'durationText', val: document.getElementById('inputDuration').value },
+            { id: 'countryText', val: document.getElementById('inputCountry').value },
+            { id: 'descText', val: document.getElementById('inputDesc').value }
+        ];
+
+        mappings.forEach(m => {
+            const obj = canvas.getObjects().find(o => o.id === m.id);
+            if (obj) {
+                obj.set('text', m.val);
+            }
+        });
+        
+        renderOptions();
+        canvas.renderAll();
+    }
+
+    function downloadPoster() {
+        const dataURL = canvas.toDataURL({ format: 'jpeg', quality: 1, multiplier: 2 });
+        const link = document.createElement('a');
+        link.download = 'AIESEC-oGX.jpg';
+        link.href = dataURL;
+        link.click();
+    }
+</script>
+
+</body>
+</html>
