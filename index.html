@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="logo.png" type="image/png">
     <title>AIESEC in Saegis Poster Generator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <style>
         /* Base Reset & Variables */
@@ -256,7 +256,7 @@
         /* Footer */
         .footer-text {
             color: var(--primary);
-            font-family: 'Shiny paint', cursive, 'Inter', sans-serif;
+            font-family: 'Caveat Brush', cursive, 'Inter', sans-serif;
             font-size: 24px;
             text-align: center;
             margin-top: 40px;
@@ -363,7 +363,7 @@
 
     // Initial Text Layers (Invisible until background is loaded)
     const duration = new fabric.Text('', { left: 65, top: 93,fontSize: 28,fontFamily: 'lato',fill: 'white',angle: -10, id: 'durationText' });
-    const country = new fabric.Text('', { left: 215, top: 72, fontSize: 65, fontFamily: 'Shiny paint, cursive', fill: '#F85A40', id: 'countryText' });
+    const country = new fabric.Text('', { left: 215, top: 72, fontSize: 65, fontFamily: 'Caveat Brush', fill: '#F85A40', id: 'countryText' });
     const desc = new fabric.Textbox('', { left: 20, top: 270, width: 200,fontSize: 11,lineHeight: 1.1,fontFamily: 'Lato',fill: '#444', id: 'descText' });
 
     canvas.add(duration, country, desc);
