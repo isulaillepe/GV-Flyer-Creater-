@@ -445,7 +445,25 @@
         
         if (inputCountry) {
             inputCountry.value = selectedCountry;
-            updatePoster();
+            
+            // Auto-load matching template image from the repo
+            const imageMap = {
+                'India': 'GV India 1.jpg',
+                'Cambodia': 'GV Cambodia 1.jpg',
+                'Thailand': 'GV Tahi 1.jpg', // Matching the local filename typo
+                'Vietnam': 'GV Vietnam 1.jpg',
+                'Taiwan': 'Taiwan.jpg'
+            };
+            
+            if (imageMap[selectedCountry]) {
+                fabric.Image.fromURL(imageMap[selectedCountry], function(img) {
+                    img.scaleToWidth(canvas.width);
+                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+                    updatePoster();
+                });
+            } else {
+                updatePoster();
+            }
         }
     }
 
