@@ -273,6 +273,7 @@
     <div class="input-group">
         <label>Select Country Drive Link</label>
         <select id="countrySelect" onchange="updateCountrySelect()">
+            <option value="Manual">-- Manual --</option>
             <option value="India">India</option>
             <option value="Cambodia">Cambodia</option>
             <option value="Thailand">Thailand</option>
@@ -445,32 +446,47 @@
     function updateCountrySelect() {
         const selectedCountry = document.getElementById('countrySelect').value;
         const inputCountry = document.getElementById('inputCountry');
-        
-        if (inputCountry) {
-            // Update the country text field so the canvas text updates too
-            inputCountry.value = selectedCountry;
-            
-            // Auto-load matching template image from the local folder
-            const imageMap = {
-                'India': 'GV India 1.jpg',
-                'Cambodia': 'GV Cambodia 1.jpg',
-                'Thailand': 'GV Tahi 1.jpg',
-                'Vietnam': 'GV Vietnam 1.jpg',
-                'Taiwan': 'Taiwan.jpg'
-            };
-            
-            const imagePath = imageMap[selectedCountry];
-            if (imagePath) {
-                fabric.Image.fromURL(imagePath, function(img) {
-                    img.scaleToWidth(canvas.width);
-                    canvas.setBackgroundImage(img, function() {
-                        updatePoster();
-                        canvas.renderAll();
-                    });
-                }, { crossOrigin: 'anonymous' });
-            } else {
+
+        if (!inputCountry) return;
+
+        if (selectedCountry === 'Manual') {
+            // Clear everything for manual entry
+            inputCountry.value = '';
+            document.getElementById('inputDuration').value = '';
+            document.getElementById('inputDesc').value = '';
+            ['optAccommodation','optTransportation','optComputer','optLeadershipSpace','optFood']
+                .forEach(id => { document.getElementById(id).checked = false; });
+            canvas.setBackgroundImage(null, function() {
+                canvas.backgroundColor = '#ffffff';
                 updatePoster();
-            }
+                canvas.renderAll();
+            });
+            return;
+        }
+
+        // Update the country text field so the canvas text updates too
+        inputCountry.value = selectedCountry;
+
+        // Auto-load matching template image from the local folder
+        const imageMap = {
+            'India': 'GV India 1.jpg',
+            'Cambodia': 'GV Cambodia 1.jpg',
+            'Thailand': 'GV Tahi 1.jpg',
+            'Vietnam': 'GV Vietnam 1.jpg',
+            'Taiwan': 'Taiwan.jpg'
+        };
+
+        const imagePath = imageMap[selectedCountry];
+        if (imagePath) {
+            fabric.Image.fromURL(imagePath, function(img) {
+                img.scaleToWidth(canvas.width);
+                canvas.setBackgroundImage(img, function() {
+                    updatePoster();
+                    canvas.renderAll();
+                });
+            }, { crossOrigin: 'anonymous' });
+        } else {
+            updatePoster();
         }
     }
 
