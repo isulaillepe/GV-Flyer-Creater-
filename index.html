@@ -445,23 +445,27 @@
         const inputCountry = document.getElementById('inputCountry');
         
         if (inputCountry) {
+            // Update the country text field so the canvas text updates too
             inputCountry.value = selectedCountry;
             
-            // Auto-load matching template image from the repo
+            // Auto-load matching template image from the local folder
             const imageMap = {
                 'India': 'GV India 1.jpg',
                 'Cambodia': 'GV Cambodia 1.jpg',
-                'Thailand': 'GV Tahi 1.jpg', // Matching the local filename typo
+                'Thailand': 'GV Tahi 1.jpg',
                 'Vietnam': 'GV Vietnam 1.jpg',
                 'Taiwan': 'Taiwan.jpg'
             };
             
-            if (imageMap[selectedCountry]) {
-                fabric.Image.fromURL(imageMap[selectedCountry], function(img) {
+            const imagePath = imageMap[selectedCountry];
+            if (imagePath) {
+                fabric.Image.fromURL(imagePath, function(img) {
                     img.scaleToWidth(canvas.width);
-                    canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-                    updatePoster();
-                });
+                    canvas.setBackgroundImage(img, function() {
+                        updatePoster();
+                        canvas.renderAll();
+                    });
+                }, { crossOrigin: 'anonymous' });
             } else {
                 updatePoster();
             }
