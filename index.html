@@ -390,6 +390,8 @@
     function renderOptions() {
         const existing = canvas.getObjects().filter(o => o.isOptionElement);
         existing.forEach(o => canvas.remove(o));
+        canvas.discardActiveObject();
+        canvas.renderAll(); // flush removals before adding new items
 
         const opts = [
             { id: 'optAccommodation', label: 'Accommodation' },
